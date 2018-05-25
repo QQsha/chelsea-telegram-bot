@@ -13,16 +13,10 @@ URL = "https://api.telegram.org/bot{}/".format(TOKEN)
 CHAT_ID = "-1001279121498"
 
 
-def get_url(url):
-    response = requests.get(url)
-    content = response.content.decode("utf8")
-    return content
-
-
 def send_photo(chat_id, photo_link, caption):
     caption = urllib.parse.quote_plus(caption)
     url = URL + "sendPhoto?chat_id={}&photo={}&caption={}&parse_mode=Markdown".format(chat_id, photo_link, caption)
-    get_url(url)
+    dp.get_url(url)
 
 
 def main():

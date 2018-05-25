@@ -1,5 +1,4 @@
 import requests
-import lxml
 
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
