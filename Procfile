@@ -1,1 +1,1 @@
-web: python chelsea_bot.py
+bot: python chelsea_bot.py
