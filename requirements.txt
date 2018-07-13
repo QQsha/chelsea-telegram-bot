@@ -9,7 +9,7 @@ cement==2.8.2
 cffi==1.10.0
 colorama==0.3.7
 comtypes==1.1.4
-conda==4.5.4
+conda==4.3.16
 cryptography==1.8.1
 cycler==0.10.0
 decorator==4.3.0
