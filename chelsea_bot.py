@@ -35,7 +35,7 @@ def main():
                     message_text = "_@Chelsea NEWS:_ \n" + "*" + last_news_info['caption'] + "." + "*"
                     send_photo(CHAT_ID, last_news_info['image'], message_text)
                     date_baseline = news_url['date']
-        time.sleep(70)
+        time.sleep(31)
 
 
 if __name__ == '__main__':
