@@ -1,6 +1,5 @@
 import urllib
 import time
-import requests
 from datetime import datetime
 import pytz
 import re
