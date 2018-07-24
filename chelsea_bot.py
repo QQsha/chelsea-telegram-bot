@@ -21,6 +21,7 @@ def send_photo(chat_id, photo_link, caption):
 def main():
     europe_timezone = pytz.timezone('Etc/GMT-1')
     date_baseline = datetime(2018, 5, 22, 15, 58, 18, tzinfo=europe_timezone)
+    caption_store = []
     while True:
         print("new pivot", datetime.now())
         news_url = drp.parsing_news()
@@ -30,11 +31,18 @@ def main():
             if re.match(r'.*/sport/.*', news_url['link']):
                 print("link is sport")
                 last_news_info = dp.get_content(news_url['link'])
-                if not re.match(r'.*Transfer news (LIVE|RECAP):.*', last_news_info['caption']):
-                    print("news is not transfer, posting news")
-                    message_text = "_@Chelsea NEWS:_ \n" + "*" + last_news_info['caption'] + "." + "*"
-                    send_photo(CHAT_ID, last_news_info['image'], message_text)
-                    date_baseline = news_url['date']
+                last_caption = last_news_info['caption']
+
+                if not re.match(r'.*Transfer [n, N]ews (LIVE|RECAP):.*', last_caption):
+                    if last_news_info['caption'] not in caption_store:
+                        print("news is not transfer, posting news")
+                        message_text = "_@Chelsea NEWS:_ \n" + "*" + last_caption + "." + "*"
+                        send_photo(CHAT_ID, last_news_info['image'], message_text)
+                        date_baseline = news_url['date']
+
+                caption_store.append(last_caption)
+                if len(caption_store) > 30:
+                    caption_store.popleft()
         time.sleep(31)
 
 
