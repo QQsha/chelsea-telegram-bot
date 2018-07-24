@@ -14,7 +14,7 @@ CHAT_ID = "-1001279121498"
 
 def send_photo(chat_id, photo_link, caption):
     caption = urllib.parse.quote_plus(caption)
-    url = URL + "sendPhoto?chat_id={}&photo={}&caption={}&parse_mode=Markdown".format(chat_id, photo_link, caption)
+    url = URL + "sendPhoto?chat_id={}&photo={}&caption={}&parse_mode=Markdown&disable_notification=True".format(chat_id, photo_link, caption)
     dp.get_url(url)
 
 
