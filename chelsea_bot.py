@@ -28,6 +28,7 @@ def main():
         news_url = drp.parsing_news()
         print(news_url['date'], "Date of last post")
         if news_url['date'] > date_baseline:
+            print('date is good')
             if re.match(r'.*/sport/.*', news_url['link']):
                 print("link is sport")
                 last_news_info = dp.get_content(news_url['link'])
@@ -37,17 +38,17 @@ def main():
                 if not re.match(r'.*Transfer [n, N]ews (LIVE|RECAP):.*', last_caption):
                     if (last_caption not in caption_store) and (last_image not in image_store):
 
-                        message_text = "_@Chelsea NEWS:_ \n" + "*" + last_caption + "." + "*"
+                        message_text = "@Chelsea _NEWS:_ \n" + "*" + last_caption + "." + "*"
                         send_photo(CHAT_ID, last_image, message_text)
                         date_baseline = news_url['date']
 
                         caption_store.append(last_caption)
-                        if len(caption_store) > 30:
+                        if len(caption_store) > 35:
                             caption_store.pop(0)
                         image_store.append(last_image)
-                        if len(image_store) > 30:
+                        if len(image_store) > 35:
                             image_store.pop(0)
-        time.sleep(31)
+        time.sleep(45)
 
 
 if __name__ == '__main__':
