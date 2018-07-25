@@ -9,7 +9,7 @@ import dailymail_parser as dp
 
 TOKEN = "569665229:AAFFOoITLtgjpxsWtAoHTATMNv5mex53JXU"
 URL = "https://api.telegram.org/bot{}/".format(TOKEN)
-CHAT_ID = "-1001279121498"
+CHAT_ID = "@Chelsea"
 
 
 def send_photo(chat_id, photo_link, caption):
@@ -28,27 +28,25 @@ def main():
         news_url = drp.parsing_news()
         print(news_url['date'], "Date of last post")
         if news_url['date'] > date_baseline:
-            print('date is good')
             if re.match(r'.*/sport/.*', news_url['link']):
                 print("link is sport")
                 last_news_info = dp.get_content(news_url['link'])
-                print(last_news_info)
                 last_caption = last_news_info['caption']
                 last_image = last_news_info['image']
 
                 if not re.match(r'.*Transfer [n, N]ews (LIVE|RECAP):.*', last_caption):
-                    if last_caption not in caption_store and last_image not in image_store:
-                        print("news is not transfer, posting news")
+                    if (last_caption not in caption_store) and (last_image not in image_store):
+
                         message_text = "_@Chelsea NEWS:_ \n" + "*" + last_caption + "." + "*"
                         send_photo(CHAT_ID, last_image, message_text)
                         date_baseline = news_url['date']
 
-                caption_store.append(last_caption)
-                if len(caption_store) > 25:
-                    caption_store.popleft()
-                image_store.append(last_image)
-                if len(caption_store) > 25:
-                    image_store.popleft()
+                        caption_store.append(last_caption)
+                        if len(caption_store) > 30:
+                            caption_store.pop(0)
+                        image_store.append(last_image)
+                        if len(image_store) > 30:
+                            image_store.pop(0)
         time.sleep(31)
 
 
