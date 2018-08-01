@@ -155,7 +155,17 @@
 			"file": "chelsea_bot.py",
 			"settings":
 			{
-				"buffer_size": 2071,
+				"buffer_size": 2004,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dailymail_parser.py",
+			"settings":
+			{
+				"buffer_size": 637,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		}
@@ -376,18 +386,18 @@
 				{
 					"buffer": 0,
 					"file": "chelsea_bot.py",
-					"semi_transient": true,
+					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2071,
+						"buffer_size": 2004,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								1940,
+								1940
 							]
 						],
 						"settings":
@@ -399,6 +409,34 @@
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "dailymail_parser.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 637,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								416,
+								416
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
@@ -437,7 +475,7 @@
 	"menu_visible": true,
 	"output.exec":
 	{
-		"height": 196.0
+		"height": 170.0
 	},
 	"output.find_results":
 	{

@@ -24,4 +24,4 @@ def get_content(url=URL):
     news['caption'] = h2[0]
     return news
 
-get_content()
+#get_content()
