@@ -55,7 +55,7 @@ def main():
 
                 if not re.match(r'.*Transfer [n, N]ews (LIVE|RECAP):.*', last_caption):
                     if same_text(caption_store, last_caption):
-                        message_text = "@like Chelsea _NEWS:_ \n" + "*" + last_caption + "." + "*"
+                        message_text = "@Chelsea _NEWS:_ \n" + "*" + last_caption + "." + "*"
                         send_photo(CHAT_ID, last_image, message_text)
                         date_baseline = news_url['date']
 
