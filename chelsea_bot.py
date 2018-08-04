@@ -58,8 +58,8 @@ def main():
 
                 if not re.match(r'.*Transfer [n, N]ews (LIVE|RECAP):.*', last_caption):
                     if last_link not in link_store:
-                        message_text = "@Chelsea _NEWS:_ \n" + last_caption + "."
-                        send_photo(CHAT_ID_TEST, last_image, message_text)
+                        message_text = "@Chelsea *NEWS:* \n" + last_caption + "."
+                        send_photo(CHAT_ID, last_image, message_text)
                         date_baseline = news_url['date']
 
                         # caption_store.append(last_caption.split(' '))
