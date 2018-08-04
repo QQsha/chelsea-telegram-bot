@@ -67,12 +67,13 @@ def main():
                         #     caption_store.pop(0)
 
                         link_store.append(last_link)
-                        if len(link_store) > 20:
+                        if len(link_store) > 30:
                             link_store.pop(0)
 
                     else:
                         message_text = "@Chelsea _NEWS:_ \n" + last_caption + "."
                         send_photo(CHAT_ID_TEST, last_image, message_text)
+                        date_baseline = news_url['date']
 
         time.sleep(45)
 
