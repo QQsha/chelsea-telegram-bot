@@ -10,7 +10,7 @@ import dailymail_parser as dp
 TOKEN = "569665229:AAFFOoITLtgjpxsWtAoHTATMNv5mex53JXU"
 URL = "https://api.telegram.org/bot{}/".format(TOKEN)
 CHAT_ID = "@Chelsea"
-#CHAT_ID = "-1001279121498"
+CHAT_ID_TEST = "-1001279121498"
 
 
 def send_photo(chat_id, photo_link, caption):
@@ -33,6 +33,8 @@ def same_text(text, text2):
                 res.append(0) 
         sum_text = sum(res)
         perc = percentage(sum_text, length)
+        print(li)
+        print(perc)
         if perc > 75:
             return False
     return True
@@ -42,26 +44,35 @@ def main():
     europe_timezone = pytz.timezone('Etc/GMT-1')
     date_baseline = datetime(2018, 5, 22, 15, 58, 18, tzinfo=europe_timezone)
     caption_store = []
-    image_store = []
+    link_store = []
     while True:
         print("new pivot", datetime.now())
         news_url = drp.parsing_news()
+        last_link = news_url['link']
         print(news_url['date'], "Date of last post")
         if news_url['date'] > date_baseline:
-            if re.match(r'.*/sport/.*', news_url['link']):
-                last_news_info = dp.get_content(news_url['link'])
+            if re.match(r'.*/sport/.*', last_link):
+                last_news_info = dp.get_content(last_link)
                 last_caption = last_news_info['caption']
                 last_image = last_news_info['image']
 
                 if not re.match(r'.*Transfer [n, N]ews (LIVE|RECAP):.*', last_caption):
-                    if same_text(caption_store, last_caption):
-                        message_text = "@Chelsea _NEWS:_ \n" + "*" + last_caption + "." + "*"
-                        send_photo(CHAT_ID, last_image, message_text)
+                    if last_link not in link_store:
+                        message_text = "@Chelsea _NEWS:_ \n" + last_caption + "."
+                        send_photo(CHAT_ID_TEST, last_image, message_text)
                         date_baseline = news_url['date']
 
-                        caption_store.append(last_caption.split(' '))
-                        if len(caption_store) > 20:
-                            caption_store.pop(0)
+                        # caption_store.append(last_caption.split(' '))
+                        # if len(caption_store) > 20:
+                        #     caption_store.pop(0)
+
+                        link_store.append(last_link)
+                        if len(link_store) > 20:
+                            link_store.pop(0)
+
+                    else:
+                        message_text = "@Chelsea _NEWS:_ \n" + last_caption + "."
+                        send_photo(CHAT_ID_TEST, last_image, message_text)
 
         time.sleep(45)
 
