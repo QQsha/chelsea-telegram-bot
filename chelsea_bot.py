@@ -33,8 +33,6 @@ def same_text(text, text2):
                 res.append(0) 
         sum_text = sum(res)
         perc = percentage(sum_text, length)
-        print(li)
-        print(perc)
         if perc > 75:
             return False
     return True
@@ -56,15 +54,11 @@ def main():
                 last_caption = last_news_info['caption']
                 last_image = last_news_info['image']
 
-                if not re.match(r'.*Transfer [n, N]ews (LIVE|RECAP):.*', last_caption):
+                if not re.match(r'LIVE|Live', last_caption):
                     if last_link not in link_store:
                         message_text = "@Chelsea *NEWS:* \n" + last_caption + "."
                         send_photo(CHAT_ID, last_image, message_text)
                         date_baseline = news_url['date']
-
-                        # caption_store.append(last_caption.split(' '))
-                        # if len(caption_store) > 20:
-                        #     caption_store.pop(0)
 
                         link_store.append(last_link)
                         if len(link_store) > 30:
@@ -75,7 +69,7 @@ def main():
                         send_photo(CHAT_ID_TEST, last_image, message_text)
                         date_baseline = news_url['date']
 
-        time.sleep(45)
+        time.sleep(40)
 
 
 if __name__ == '__main__':
