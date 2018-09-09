@@ -1,8 +1,8 @@
 import unittest
 import chelsea_bot
+import requests
+import re
 
-import dailymail_rss_parser as drp
-import dailymail_parser as dp
 
 
 class TestBot(unittest.TestCase):

@@ -17,5 +17,23 @@ def parsing_news():
         info_news.append(news)
     return info_news[0]
 
+def percentage(part, whole):
+  return 100 * float(part)/float(whole)
+
+def same_text(text, text2):
+    text_list2 = text2.split(' ')
+    length = len(text_list2)
+    for li in text: 
+        res = []
+        for i in text_list2:
+            if i in li:
+                res.append(1)
+            else:
+                res.append(0) 
+        sum_text = sum(res)
+        perc = percentage(sum_text, length)
+        if perc > 75:
+            return False
+    return True
 
 

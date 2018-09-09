@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"link",
+				"link_store"
+			],
+			[
+				"last",
+				"last_link"
+			],
+			[
 				"text_list",
 				"text_list_false"
 			],
@@ -18,10 +26,6 @@
 			[
 				"image",
 				"image_store"
-			],
-			[
-				"last",
-				"last_image"
 			],
 			[
 				"cap",
@@ -167,7 +171,7 @@
 			"file": "chelsea_bot.py",
 			"settings":
 			{
-				"buffer_size": 2290,
+				"buffer_size": 2446,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -176,7 +180,7 @@
 			"file": "chelsea_tests.py",
 			"settings":
 			{
-				"buffer_size": 1460,
+				"buffer_size": 2175,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -226,6 +230,14 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"Vir",
+				"Virtualenv: Activate"
+			],
+			[
+				"packa",
+				"Package Control: Install Package"
+			],
 			[
 				"Package Control: ",
 				"Package Control: Install Package"
@@ -411,7 +423,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -420,15 +432,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2290,
+						"buffer_size": 2446,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								981,
-								981
+								968,
+								968
 							]
 						],
 						"settings":
@@ -436,10 +448,10 @@
 							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 368.0,
+						"translation.y": 214.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -448,15 +460,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1460,
+						"buffer_size": 2175,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								945,
-								945
+								1817,
+								1817
 							]
 						],
 						"settings":
@@ -467,7 +479,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -483,8 +495,8 @@
 						"selection":
 						[
 							[
-								532,
-								532
+								56,
+								215
 							]
 						],
 						"settings":
@@ -495,7 +507,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -511,8 +523,8 @@
 						"selection":
 						[
 							[
-								494,
-								494
+								168,
+								114
 							]
 						],
 						"settings":
@@ -523,7 +535,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -568,7 +580,7 @@
 	{
 		"height": 0.0
 	},
-	"pinned_build_system": "Packages/Python 3/Python3.sublime-build",
+	"pinned_build_system": "Packages/Virtualenv/Python + Virtualenv.sublime-build",
 	"project": "chelsea_bot.sublime-project",
 	"replace":
 	{
@@ -610,7 +622,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 86.0,
+	"side_bar_width": 204.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
