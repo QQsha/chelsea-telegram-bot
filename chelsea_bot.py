@@ -14,6 +14,7 @@ URL = "https://api.telegram.org/bot{}/".format(TOKEN)
 CHAT_ID = "@Chelsea"
 CHAT_ID_TEST = "-1001279121498"
 
+
 PATTERN_IMAGE = r'og:image" content="(.*)"'
 PATTERN_TITLE = r'.*<h2>(.*)</h2>'
 
@@ -51,26 +52,37 @@ def send_photo(chat_id, photo_link, caption):
     url = URL + "sendPhoto?chat_id={}&photo={}&caption={}&parse_mode=Markdown&disable_notification=True".format(chat_id, photo_link, caption)
     get_url(url)
 
-def date_checker(date):
-    europe_timezone = pytz.timezone('Etc/GMT-1')
-    date_baseline = datetime(2018, 5, 22, 15, 58, 18, tzinfo=europe_timezone)
-    if date > date_baseline:
+def percentage(part, whole):
+    return 100 * (float(part)/float(whole))
+
+def same_text(caption_store, caption):
+    text_list = caption.split(' ')
+    length = len(text_list)
+    for li in caption_store: 
+        res = []
+        for i in text_list:
+            if i in li:
+                res.append(1)
+            else:
+                res.append(0) 
+        sum_text = sum(res)
+        perc = percentage(sum_text, length)
+        if perc > 69:
+            return False
+    else:
         return True
-
-def sport_checker(link):
-    if re.match(r'.*/sport/.*', link):
-        last_news_info = get_content(link)
-        last_caption = last_news_info['caption']
-        last_image = last_news_info['image']
-
+    
 
 def main():
+    europe_timezone = pytz.timezone('Etc/GMT-1')
+    date_baseline = datetime(2018, 5, 22, 15, 58, 18, tzinfo=europe_timezone)
     link_store = []
+    caption_store = []
     while True:
         print("new pivot", datetime.now())
         news_url = parsing_news()
         last_link = news_url['link']
-        if date_checker(news_url['date']):
+        if news_url['date'] > date_baseline:
             if re.match(r'.*/sport/.*', last_link):
                 last_news_info = get_content(last_link)
                 last_caption = last_news_info['caption']
@@ -78,18 +90,24 @@ def main():
 
             if not re.match(r'LIVE|Live', last_caption):
                 if last_link not in link_store:
-                    message_text = "@Chelsea *NEWS:* \n" + last_caption + "."
-                    send_photo(CHAT_ID, last_image, message_text)
-                    date_baseline = news_url['date']
+                    if same_text(caption_store, last_caption):
+                        message_text = "@Chelsea *NEWS:* \n" + last_caption + "."
+                        send_photo(CHAT_ID, last_image, message_text)
+                        date_baseline = news_url['date']
 
-                    link_store.append(last_link)
-                    if len(link_store) > 30:
-                        link_store.pop(0)
+                        link_store.append(last_link)
+                        if len(link_store) > 30:
+                            link_store.pop(0)
+                        
+                        lc_list = last_caption.split(' ')
+                        caption_store.append(lc_list)
+                        if len(caption_store) > 30:
+                            caption_store.pop(0)
 
-                else:
-                    message_text = "@Chelsea _NEWS:_ \n" + last_caption + "."
-                    send_photo(CHAT_ID_TEST, last_image, message_text)
-                    date_baseline = news_url['date']
+                    else:
+                        message_text = "@Chelsea _test:_ \n" + last_caption + "."
+                        send_photo(CHAT_ID_TEST, last_image, message_text)
+                        date_baseline = news_url['date']
 
         time.sleep(40)
 

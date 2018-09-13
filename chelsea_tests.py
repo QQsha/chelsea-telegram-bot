@@ -2,6 +2,7 @@ import unittest
 import chelsea_bot
 import requests
 import re
+from chelsea_bot import get_content, same_text
 
 
 
@@ -20,7 +21,7 @@ class TestBot(unittest.TestCase):
         self.text_list_false = [self.text2.split(), self.text3.split(), self.text4.split(), self.text.split(), self.text5.split()]
 
     def test_get_content(self):
-        result = dp.get_content(self.link)
+        result = get_content(self.link)
         le_image = "https://i.dailymail.co.uk/i/newpix/2018/05/22/07/4C72A6D400000578-0-image-a-7_1526971441826.jpg"
         le_caption = "Chelsea make Robert Lewandowski their top summer transfer target but they'll need to fork out more than £100m to land Bayern Munich striker"
         self.assertEqual(result['image'], le_image)
