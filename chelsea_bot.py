@@ -14,7 +14,6 @@ URL = "https://api.telegram.org/bot{}/".format(TOKEN)
 CHAT_ID = "@Chelsea"
 CHAT_ID_TEST = "-1001279121498"
 
-
 PATTERN_IMAGE = r'og:image" content="(.*)"'
 PATTERN_TITLE = r'.*<h2>(.*)</h2>'
 
@@ -31,6 +30,7 @@ def parsing_news():
         news['date'] = parse(item.pubDate.text)
         info_news.append(news)
     return info_news[0]
+
 
 def get_url(url):
     response = requests.get(url)
@@ -51,6 +51,23 @@ def send_photo(chat_id, photo_link, caption):
     caption = urllib.parse.quote_plus(caption)
     url = URL + "sendPhoto?chat_id={}&photo={}&caption={}&parse_mode=Markdown&disable_notification=True".format(chat_id, photo_link, caption)
     get_url(url)
+
+
+def caption_filter(caption):
+    raw_lst = [
+        '.*(LIVE|Live)',
+        '.*(odds and stats)',
+        '.*(betting guide)',
+        '.*(Premier League clubs)'
+        ]
+    regexes = []
+    for raw_regex in raw_lst:
+        regexes.append(re.compile(raw_regex))
+    
+    if any(regex.match(caption) for regex in regexes):
+        return False
+    
+    return True
 
 def percentage(part, whole):
     return 100 * (float(part)/float(whole))
@@ -88,26 +105,26 @@ def main():
                 last_caption = last_news_info['caption']
                 last_image = last_news_info['image']
 
-            if not re.match(r'LIVE|Live', last_caption):
-                if last_link not in link_store:
-                    if same_text(caption_store, last_caption):
-                        message_text = "@Chelsea *NEWS:* \n" + last_caption + "."
-                        send_photo(CHAT_ID, last_image, message_text)
-                        date_baseline = news_url['date']
+                if caption_filter(last_caption):
+                    if last_link not in link_store:
+                        if same_text(caption_store, last_caption):
+                            message_text = "@Chelsea *NEWS:* \n" + last_caption + "."
+                            send_photo(CHAT_ID, last_image, message_text)
+                            date_baseline = news_url['date']
 
-                        link_store.append(last_link)
-                        if len(link_store) > 30:
-                            link_store.pop(0)
-                        
-                        lc_list = last_caption.split(' ')
-                        caption_store.append(lc_list)
-                        if len(caption_store) > 30:
-                            caption_store.pop(0)
+                            link_store.append(last_link)
+                            if len(link_store) > 30:
+                                link_store.pop(0)
+                            
+                            lc_list = last_caption.split(' ')
+                            caption_store.append(lc_list)
+                            if len(caption_store) > 30:
+                                caption_store.pop(0)
 
-                    else:
-                        message_text = "@Chelsea _test:_ \n" + last_caption + "."
-                        send_photo(CHAT_ID_TEST, last_image, message_text)
-                        date_baseline = news_url['date']
+                        else:
+                            message_text = "@Chelsea _test:_ \n" + last_caption + "."
+                            send_photo(CHAT_ID_TEST, last_image, message_text)
+                            date_baseline = news_url['date']
 
         time.sleep(40)
 
