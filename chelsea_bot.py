@@ -1,8 +1,8 @@
 import urllib
 import time
 from datetime import datetime
-import pytz
 import re
+import pytz
 import requests
 
 from bs4 import BeautifulSoup
@@ -42,14 +42,16 @@ def get_content(url):
     news = {}
     html = get_url(url)
     news['image'] = re.findall(PATTERN_IMAGE, html)[0]
-    h2 = re.findall(PATTERN_TITLE, html)
-    news['caption'] = h2[0]
+    header = re.findall(PATTERN_TITLE, html)
+    news['caption'] = header[0]
     return news
 
 
 def send_photo(chat_id, photo_link, caption):
     caption = urllib.parse.quote_plus(caption)
-    url = URL + "sendPhoto?chat_id={}&photo={}&caption={}&parse_mode=Markdown&disable_notification=True".format(chat_id, photo_link, caption)
+    url = URL + "sendPhoto?chat_id={}&photo={} \
+    &caption={}&parse_mode=Markdown&disable_notification=True".format(
+        chat_id, photo_link, caption)
     get_url(url)
 
 
@@ -63,10 +65,8 @@ def caption_filter(caption):
     regexes = []
     for raw_regex in raw_lst:
         regexes.append(re.compile(raw_regex))
-    
     if any(regex.match(caption) for regex in regexes):
         return False
-    
     return True
 
 def percentage(part, whole):
@@ -75,20 +75,18 @@ def percentage(part, whole):
 def same_text(caption_store, caption):
     text_list = caption.split(' ')
     length = len(text_list)
-    for li in caption_store: 
+    for cap in caption_store:
         res = []
         for i in text_list:
-            if i in li:
+            if i in cap:
                 res.append(1)
             else:
-                res.append(0) 
+                res.append(0)
         sum_text = sum(res)
         perc = percentage(sum_text, length)
         if perc > 69:
             return False
-    else:
-        return True
-    
+    return True
 
 def main():
     europe_timezone = pytz.timezone('Etc/GMT-1')
@@ -97,6 +95,7 @@ def main():
     caption_store = []
     while True:
         print("new pivot", datetime.now())
+        print("Caption STORE: ", caption_store)
         news_url = parsing_news()
         last_link = news_url['link']
         if news_url['date'] > date_baseline:
@@ -115,7 +114,6 @@ def main():
                             link_store.append(last_link)
                             if len(link_store) > 30:
                                 link_store.pop(0)
-                            
                             lc_list = last_caption.split(' ')
                             caption_store.append(lc_list)
                             if len(caption_store) > 30:
