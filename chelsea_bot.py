@@ -19,6 +19,7 @@ PATTERN_TITLE = r'.*<h2>(.*)</h2>'
 
 
 def parsing_news():
+    print("keka")
     url = "http://www.dailymail.co.uk/sport/teampages/chelsea.rss"
     resp = requests.get(url)
     soup = BeautifulSoup(resp.content, 'xml')
