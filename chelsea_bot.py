@@ -1,3 +1,4 @@
+import sqlite3
 import urllib
 import time
 from datetime import datetime
@@ -19,7 +20,6 @@ PATTERN_TITLE = r'.*<h2>(.*)</h2>'
 
 
 def parsing_news():
-    print("keka")
     url = "http://www.dailymail.co.uk/sport/teampages/chelsea.rss"
     resp = requests.get(url)
     soup = BeautifulSoup(resp.content, 'xml')
@@ -70,6 +70,10 @@ def caption_filter(caption):
         return False
     return True
 
+def scrapper(last_link):
+    last_news_info = get_content(last_link)
+    return last_news_info['caption'], last_news_info['image']
+
 def percentage(part, whole):
     return 100 * (float(part)/float(whole))
 
@@ -79,7 +83,7 @@ def same_text(caption_store, caption):
     for cap in caption_store:
         res = []
         for i in text_list:
-            if i in cap:
+            if i in cap.split(' '):
                 res.append(1)
             else:
                 res.append(0)
@@ -89,37 +93,53 @@ def same_text(caption_store, caption):
             return False
     return True
 
+def db_con():
+    dbase = sqlite3.connect('data/mydb', timeout=10)
+    cursor = dbase.cursor()
+    cursor.execute('''SELECT id, caption, link
+                  FROM posts 
+                  ORDER BY id DESC
+                  LIMIT 10;''')
+    all_rows = cursor.fetchall()
+    dbase.close()
+    return all_rows
+
+def local_store(db_store):
+    link_store = [link[2] for link in db_store]
+    caption_store = [cap[1] for cap in db_store]
+    print(link_store)
+    return caption_store, link_store
+
+def db_insert(caption, link):
+    dbase = sqlite3.connect('data/mydb', timeout=10)
+    cursor = dbase.cursor()
+    cursor.execute('''INSERT INTO posts(caption, link) VALUES(:caption, :link)''',
+                   {'caption':caption, 'link':link})
+    dbase.commit()
+    dbase.close()
+
+def publish_post(last_caption, last_image, last_link, chat_id):
+    message_text = "@Chelsea *NEWS:* \n" + last_caption + "."
+    send_photo(chat_id, last_image, message_text)
+    db_insert(last_caption, last_link)
+
 def main():
     europe_timezone = pytz.timezone('Etc/GMT-1')
     date_baseline = datetime(2018, 5, 22, 15, 58, 18, tzinfo=europe_timezone)
-    link_store = []
-    caption_store = []
     while True:
         print("new pivot", datetime.now())
-        print("Caption STORE: ", caption_store)
         news_url = parsing_news()
         last_link = news_url['link']
         if news_url['date'] > date_baseline:
             if re.match(r'.*/sport/.*', last_link):
-                last_news_info = get_content(last_link)
-                last_caption = last_news_info['caption']
-                last_image = last_news_info['image']
-
+                last_caption, last_image = scrapper(last_link)
                 if caption_filter(last_caption):
+                    db_store = db_con()
+                    caption_store, link_store = local_store(db_store)
                     if last_link not in link_store:
                         if same_text(caption_store, last_caption):
-                            message_text = "@Chelsea *NEWS:* \n" + last_caption + "."
-                            send_photo(CHAT_ID, last_image, message_text)
+                            publish_post(last_caption, last_image, last_link, CHAT_ID_TEST)
                             date_baseline = news_url['date']
-
-                            link_store.append(last_link)
-                            if len(link_store) > 30:
-                                link_store.pop(0)
-                            lc_list = last_caption.split(' ')
-                            caption_store.append(lc_list)
-                            if len(caption_store) > 30:
-                                caption_store.pop(0)
-
                         else:
                             message_text = "@Chelsea _test:_ \n" + last_caption + "."
                             send_photo(CHAT_ID_TEST, last_image, message_text)
