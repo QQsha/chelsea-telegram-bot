@@ -32,12 +32,10 @@ def parsing_news():
         info_news.append(news)
     return info_news[0]
 
-
 def get_url(url):
     response = requests.get(url)
     content = response.content.decode("utf8")
     return content
-
 
 def get_content(url):
     news = {}
@@ -47,14 +45,12 @@ def get_content(url):
     news['caption'] = header[0]
     return news
 
-
 def send_photo(chat_id, photo_link, caption):
     caption = urllib.parse.quote_plus(caption)
     url = URL + "sendPhoto?chat_id={}&photo={} \
     &caption={}&parse_mode=Markdown&disable_notification=True".format(
         chat_id, photo_link, caption)
     get_url(url)
-
 
 def caption_filter(caption):
     raw_lst = [
@@ -122,6 +118,7 @@ def publish_post(last_caption, last_image, last_link, chat_id):
     message_text = "@Chelsea *NEWS:* \n" + last_caption + "."
     send_photo(chat_id, last_image, message_text)
     db_insert(last_caption, last_link)
+
 
 def main():
     europe_timezone = pytz.timezone('Etc/GMT-1')
