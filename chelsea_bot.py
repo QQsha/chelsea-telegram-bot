@@ -140,7 +140,7 @@ def main():
                     caption_store, link_store = local_store(db_store)
                     if last_link not in link_store:
                         if same_text(caption_store, last_caption):
-                            publish_post(last_caption, last_image, last_link, CHAT_ID_TEST)
+                            publish_post(last_caption, last_image, last_link, CHAT_ID)
                             date_baseline = news_url['date']
                         else:
                             message_text = "@Chelsea _test:_ \n" + last_caption + "."
