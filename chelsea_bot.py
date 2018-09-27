@@ -1,8 +1,8 @@
-import sqlite3
 import urllib
 import time
 from datetime import datetime
 import re
+import psycopg2
 import pytz
 import requests
 
@@ -55,7 +55,7 @@ def send_photo(chat_id, photo_link, caption):
 def caption_filter(caption):
     raw_lst = [
         '.*(LIVE|Live)',
-        '.*(odds and stats)',
+        '.*(odds|stats)',
         '.*(betting guide)',
         '.*(Premier League clubs)'
         ]
@@ -89,15 +89,22 @@ def same_text(caption_store, caption):
             return False
     return True
 
+def con_postgres():
+    conn = psycopg2.connect(host="ec2-75-101-153-56.compute-1.amazonaws.com",
+                            database="ddgva2m0b3akm5",
+                            user="xsqidgwwvwvgkm",
+                            password="1e82bd5c5b23996ee1ed11dfaa89447adc5c524999c574b6c24b67c0c1a22604")
+    cursor = conn.cursor()
+    return conn, cursor
+
 def db_con():
-    dbase = sqlite3.connect('data/mydb', timeout=10)
-    cursor = dbase.cursor()
+    conn, cursor = con_postgres()
     cursor.execute('''SELECT id, caption, link
                   FROM posts 
                   ORDER BY id DESC
                   LIMIT 10;''')
     all_rows = cursor.fetchall()
-    dbase.close()
+    conn.close()
     return all_rows
 
 def local_store(db_store):
@@ -107,12 +114,10 @@ def local_store(db_store):
     return caption_store, link_store
 
 def db_insert(caption, link):
-    dbase = sqlite3.connect('data/mydb', timeout=10)
-    cursor = dbase.cursor()
-    cursor.execute('''INSERT INTO posts(caption, link) VALUES(:caption, :link)''',
-                   {'caption':caption, 'link':link})
-    dbase.commit()
-    dbase.close()
+    conn, cursor = con_postgres()
+    cursor.execute("INSERT INTO posts (caption, link) VALUES (%s, %s)", (caption, link))
+    conn.commit()
+    conn.close()
 
 def publish_post(last_caption, last_image, last_link, chat_id):
     message_text = "@Chelsea *NEWS:* \n" + last_caption + "."
@@ -135,7 +140,7 @@ def main():
                     caption_store, link_store = local_store(db_store)
                     if last_link not in link_store:
                         if same_text(caption_store, last_caption):
-                            publish_post(last_caption, last_image, last_link, CHAT_ID)
+                            publish_post(last_caption, last_image, last_link, CHAT_ID_TEST)
                             date_baseline = news_url['date']
                         else:
                             message_text = "@Chelsea _test:_ \n" + last_caption + "."
