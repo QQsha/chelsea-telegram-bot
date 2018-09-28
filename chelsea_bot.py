@@ -2,6 +2,7 @@ import urllib
 import time
 from datetime import datetime
 import re
+import os
 import psycopg2
 import pytz
 import requests
@@ -90,10 +91,12 @@ def same_text(caption_store, caption):
     return True
 
 def con_postgres():
-    conn = psycopg2.connect(host="ec2-75-101-153-56.compute-1.amazonaws.com",
-                            database="ddgva2m0b3akm5",
-                            user="xsqidgwwvwvgkm",
-                            password="1e82bd5c5b23996ee1ed11dfaa89447adc5c524999c574b6c24b67c0c1a22604")
+    # conn = psycopg2.connect(host="ec2-75-101-153-56.compute-1.amazonaws.com",
+    #                         database="ddgva2m0b3akm5",
+    #                         user="xsqidgwwvwvgkm",
+    #                         password="1e82bd5c5b23996ee1ed11dfaa89447adc5c524999c574b6c24b67c0c1a22604")
+    database_url = os.environ['DATABASE_URL']
+    conn = psycopg2.connect(database_url, sslmode='require')
     cursor = conn.cursor()
     return conn, cursor
 
