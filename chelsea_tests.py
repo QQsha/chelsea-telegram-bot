@@ -1,9 +1,6 @@
 import unittest
-import chelsea_bot
-import requests
-import re
-from chelsea_bot import get_content, same_text
 
+from chelsea_bot import get_content, same_text
 
 
 class TestBot(unittest.TestCase):
@@ -28,13 +25,14 @@ class TestBot(unittest.TestCase):
         self.assertEqual(result['caption'], le_caption)
 
     def test_same_text_true(self):
-        result = chelsea_bot.same_text(self.text_list_true, self.text)
+        result = same_text(self.text_list_true, self.text)
         self.assertEqual(result, True)
 
     def test_same_text_false(self):
-        result = chelsea_bot.same_text(self.text_list_false, self.text)
+        result = same_text(self.text_list_false, self.text)
         self.assertEqual(result, False)
-
+    
+    #not finished yet
 
 
 if __name__ == '__main__':

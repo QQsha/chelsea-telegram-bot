@@ -1,15 +1,14 @@
-import urllib
-import time
-from datetime import datetime
-import re
 import os
+import re
+import time
+import urllib
+from datetime import datetime
+
 import psycopg2
 import pytz
 import requests
-
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
-
 
 TOKEN = "569665229:AAFFOoITLtgjpxsWtAoHTATMNv5mex53JXU"
 URL = "https://api.telegram.org/bot{}/".format(TOKEN)
@@ -19,7 +18,7 @@ CHAT_ID_TEST = "-1001279121498"
 PATTERN_IMAGE = r'og:image" content="(.*)"'
 PATTERN_TITLE = r'.*<h2>(.*)</h2>'
 
-
+# parsing dailymail rss feed
 def parsing_news():
     url = "http://www.dailymail.co.uk/sport/teampages/chelsea.rss"
     resp = requests.get(url)
@@ -33,11 +32,13 @@ def parsing_news():
         info_news.append(news)
     return info_news[0]
 
+# get request
 def get_url(url):
     response = requests.get(url)
     content = response.content.decode("utf8")
     return content
 
+# scrapping caption and image from html news
 def get_content(url):
     news = {}
     html = get_url(url)
@@ -46,6 +47,7 @@ def get_content(url):
     news['caption'] = header[0]
     return news
 
+# telgram post method
 def send_photo(chat_id, photo_link, caption):
     caption = urllib.parse.quote_plus(caption)
     url = URL + "sendPhoto?chat_id={}&photo={} \
@@ -53,12 +55,16 @@ def send_photo(chat_id, photo_link, caption):
         chat_id, photo_link, caption)
     get_url(url)
 
+# caption filter
 def caption_filter(caption):
     raw_lst = [
+        '.*(RSS)',
         '.*(LIVE|Live)',
         '.*(odds|stats)',
         '.*(betting guide)',
-        '.*(Premier League clubs)'
+        '.*(Premier League)',
+        '.*(THINGS|things)',
+        '.*(RESULT)'
         ]
     regexes = []
     for raw_regex in raw_lst:
@@ -67,13 +73,16 @@ def caption_filter(caption):
         return False
     return True
 
+# return caption text, and image link
 def scrapper(last_link):
     last_news_info = get_content(last_link)
     return last_news_info['caption'], last_news_info['image']
 
+# return part % of whole
 def percentage(part, whole):
     return 100 * (float(part)/float(whole))
 
+# function for checking double posting
 def same_text(caption_store, caption):
     text_list = caption.split(' ')
     length = len(text_list)
@@ -90,16 +99,14 @@ def same_text(caption_store, caption):
             return False
     return True
 
+# Postgres connect
 def con_postgres():
-    # conn = psycopg2.connect(host="ec2-75-101-153-56.compute-1.amazonaws.com",
-    #                         database="ddgva2m0b3akm5",
-    #                         user="xsqidgwwvwvgkm",
-    #                         password="1e82bd5c5b23996ee1ed11dfaa89447adc5c524999c574b6c24b67c0c1a22604")
     database_url = os.environ['DATABASE_URL']
     conn = psycopg2.connect(database_url, sslmode='require')
     cursor = conn.cursor()
     return conn, cursor
 
+# returning 10 last posts from db
 def db_con():
     conn, cursor = con_postgres()
     cursor.execute('''SELECT id, caption, link
@@ -110,18 +117,20 @@ def db_con():
     conn.close()
     return all_rows
 
+# getting caption and link from posts
 def local_store(db_store):
     link_store = [link[2] for link in db_store]
     caption_store = [cap[1] for cap in db_store]
-    print(link_store)
     return caption_store, link_store
 
+# adding new post in db
 def db_insert(caption, link):
     conn, cursor = con_postgres()
     cursor.execute("INSERT INTO posts (caption, link) VALUES (%s, %s)", (caption, link))
     conn.commit()
     conn.close()
 
+# commit post in Telegram
 def publish_post(last_caption, last_image, last_link, chat_id):
     message_text = "@Chelsea *NEWS:* \n" + last_caption + "."
     send_photo(chat_id, last_image, message_text)
