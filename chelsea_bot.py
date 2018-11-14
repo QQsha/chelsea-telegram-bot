@@ -44,6 +44,7 @@ def get_url(url):
 
 # telgram post method
 
+
 def send_photo(chat_id, photo_link, caption):
     caption = urllib.parse.quote_plus(caption)
     url = URL + "sendPhoto?chat_id={}&photo={} \
@@ -158,7 +159,6 @@ def publish_post(last_caption, last_image, last_link, chat_id):
 
 def main():
     europe_timezone = pytz.timezone('Etc/GMT-1')
-    #date_baseline = datetime(2018, 5, 22, 15, 58, 18, tzinfo=europe_timezone)
     date_baseline = datetime.now(europe_timezone)
     print(date_baseline)
     while True:
@@ -179,4 +179,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
