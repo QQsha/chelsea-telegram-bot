@@ -19,8 +19,6 @@ PATTERN_IMAGE = r'og:image" content="(.*)"'
 PATTERN_TITLE = r'.*<h2>(.*)</h2>'
 
 # parsing dailymail rss feed
-
-
 def parsing_news():
     url = "http://www.dailymail.co.uk/sport/teampages/chelsea.rss"
     resp = requests.get(url)
@@ -35,16 +33,12 @@ def parsing_news():
     return info_news[0]
 
 # get request
-
-
 def get_url(url):
     response = requests.get(url)
     content = response.content.decode("utf8")
     return content
 
 # telgram post method
-
-
 def send_photo(chat_id, photo_link, caption):
     caption = urllib.parse.quote_plus(caption)
     url = URL + "sendPhoto?chat_id={}&photo={} \
@@ -53,8 +47,6 @@ def send_photo(chat_id, photo_link, caption):
     get_url(url)
 
 # caption filter
-
-
 def caption_filter(caption):
     raw_lst = [
         '.*(RSS)',
@@ -73,8 +65,6 @@ def caption_filter(caption):
     return True
 
 # return caption text, and image link
-
-
 def scrapper(url):
     news = {}
     html = get_url(url)
@@ -84,14 +74,10 @@ def scrapper(url):
     return news['caption'], news['image']
 
 # return % part number of whole number
-
-
 def percentage(part, whole):
     return 100 * (float(part)/float(whole))
 
 # function for checking double posting
-
-
 def same_text(caption_store, caption):
     text_list = caption.split(' ')
     length = len(text_list)
@@ -109,8 +95,6 @@ def same_text(caption_store, caption):
     return True
 
 # Postgres connect
-
-
 def con_postgres():
     database_url = os.environ['DATABASE_URL']
     conn = psycopg2.connect(database_url, sslmode='require')
@@ -118,8 +102,6 @@ def con_postgres():
     return conn, cursor
 
 # returning 10 last posts from db
-
-
 def db_con():
     conn, cursor = con_postgres()
     cursor.execute('''SELECT id, caption, link
@@ -131,16 +113,12 @@ def db_con():
     return all_rows
 
 # getting caption and link from posts
-
-
 def local_store(db_store):
     link_store = [link[2] for link in db_store]
     caption_store = [cap[1] for cap in db_store]
     return caption_store, link_store
 
 # adding new post in db
-
-
 def db_insert(caption, link):
     conn, cursor = con_postgres()
     cursor.execute(
@@ -149,8 +127,6 @@ def db_insert(caption, link):
     conn.close()
 
 # commit post in Telegram
-
-
 def publish_post(last_caption, last_image, last_link, chat_id):
     message_text = "@Chelsea *NEWS:* \n" + last_caption + "."
     send_photo(chat_id, last_image, message_text)
@@ -160,18 +136,16 @@ def publish_post(last_caption, last_image, last_link, chat_id):
 def main():
     europe_timezone = pytz.timezone('Etc/GMT-1')
     date_baseline = datetime.now(europe_timezone)
-    print(date_baseline)
     while True:
         print("new pivot", datetime.now(europe_timezone))
         news_url = parsing_news()
         last_link = news_url['link']
-        print(news_url['date'], 'kek')
-        if (news_url['date'] > date_baseline) and (re.match(r'.*/sport/.*', last_link)):
+        if (news_url['date'] > date_baseline) & bool(re.search(r'.*/sport/.*', last_link)):
             last_caption, last_image = scrapper(last_link)
             if caption_filter(last_caption):
                 db_store = db_con()
                 caption_store, link_store = local_store(db_store)
-                if (last_link not in link_store) and (same_text(caption_store, last_caption)):
+                if (last_link not in link_store) & (same_text(caption_store, last_caption)):
                     publish_post(last_caption, last_image, last_link, CHAT_ID)
                     date_baseline = news_url['date']
         time.sleep(40)
