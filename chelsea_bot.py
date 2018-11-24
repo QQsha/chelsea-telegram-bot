@@ -49,13 +49,13 @@ def send_photo(chat_id, photo_link, caption):
 # caption filter
 def caption_filter(caption):
     raw_lst = [
-        # '.*(RSS)',
-        # '.*(LIVE|Live)',
-        # '.*(odds|stats)',
-        # '.*(betting guide)',
-        # '.*(Premier League)',
-        # '.*(THINGS|things)',
-        # '.*(RESULT)'
+        '.*(RSS)',
+        '.*(LIVE|Live)',
+        '.*(odds|stats)',
+        '.*(betting guide)',
+        '.*(Premier League)',
+        '.*(THINGS|things)',
+        '.*(RESULT)'
     ]
     regexes = []
     for raw_regex in raw_lst:
