@@ -2,7 +2,7 @@ import os
 import re
 import time
 import urllib
-from datetime import datetime
+import datetime as dt
 
 import psycopg2
 import pytz
@@ -127,29 +127,27 @@ def db_insert(caption, link):
     conn.close()
 
 # commit post in Telegram
-def publish_post(last_caption, last_image, last_link, chat_id):
+def publish_post(last_caption, last_image, chat_id):
     message_text = "@Chelsea *NEWS:* \n" + last_caption + "."
     send_photo(chat_id, last_image, message_text)
-    db_insert(last_caption, last_link)
 
 
 def main():
     europe_timezone = pytz.timezone('Etc/GMT-1')
-    date_baseline = datetime.now(europe_timezone)
-    #date_baseline = datetime(2002, 12, 25, tzinfo=europe_timezone)
+    date_baseline = dt.datetime.now(europe_timezone) - dt.timedelta(hours=2)
     while True:
-        print("new pivot", datetime.now(europe_timezone))
+        print("new pivot", dt.datetime.now(europe_timezone))
         news_url = parsing_news()
         last_link = news_url['link']
         if (news_url['date'] > date_baseline) and ('/sport/' in last_link):
             last_caption, last_image = scrapper(last_link)
-            print(caption_filter(last_caption))
             if caption_filter(last_caption):
                 db_store = db_con()
                 caption_store, link_store = local_store(db_store)
                 if (last_link not in link_store) and same_text(caption_store, last_caption):
-                    publish_post(last_caption, last_image, last_link, CHAT_ID)
+                    publish_post(last_caption, last_image, CHAT_ID)
                     date_baseline = news_url['date']
+                    db_insert(last_caption, last_link)
         time.sleep(40)
 
 
