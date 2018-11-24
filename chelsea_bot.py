@@ -49,13 +49,13 @@ def send_photo(chat_id, photo_link, caption):
 # caption filter
 def caption_filter(caption):
     raw_lst = [
-        '.*(RSS)',
-        '.*(LIVE|Live)',
-        '.*(odds|stats)',
-        '.*(betting guide)',
-        '.*(Premier League)',
-        '.*(THINGS|things)',
-        '.*(RESULT)'
+        # '.*(RSS)',
+        # '.*(LIVE|Live)',
+        # '.*(odds|stats)',
+        # '.*(betting guide)',
+        # '.*(Premier League)',
+        # '.*(THINGS|things)',
+        # '.*(RESULT)'
     ]
     regexes = []
     for raw_regex in raw_lst:
@@ -136,16 +136,18 @@ def publish_post(last_caption, last_image, last_link, chat_id):
 def main():
     europe_timezone = pytz.timezone('Etc/GMT-1')
     date_baseline = datetime.now(europe_timezone)
+    #date_baseline = datetime(2002, 12, 25, tzinfo=europe_timezone)
     while True:
         print("new pivot", datetime.now(europe_timezone))
         news_url = parsing_news()
         last_link = news_url['link']
-        if (news_url['date'] > date_baseline) & bool(re.search(r'.*/sport/.*', last_link)):
+        if (news_url['date'] > date_baseline) and ('/sport/' in last_link):
             last_caption, last_image = scrapper(last_link)
+            print(caption_filter(last_caption))
             if caption_filter(last_caption):
                 db_store = db_con()
                 caption_store, link_store = local_store(db_store)
-                if (last_link not in link_store) & (same_text(caption_store, last_caption)):
+                if (last_link not in link_store) and same_text(caption_store, last_caption):
                     publish_post(last_caption, last_image, last_link, CHAT_ID)
                     date_baseline = news_url['date']
         time.sleep(40)
