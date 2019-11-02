@@ -55,7 +55,11 @@ def caption_filter(caption):
         '.*(betting guide)',
         '.*(Premier League)',
         '.*(THINGS|things)',
-        '.*(RESULT)'
+        '.*(RESULT)',
+        '.*(Manchester United)',
+        '.*(Rashford)',
+        '.*(Pogba)',
+        '.*(Solskjaer)'
     ]
     regexes = []
     for raw_regex in raw_lst:
